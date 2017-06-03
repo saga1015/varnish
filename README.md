@@ -1,0 +1,2 @@
+# varnish
+My varnish configuration
