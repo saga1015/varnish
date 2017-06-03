@@ -121,12 +121,12 @@ sub vcl_recv {
   }
 
     # Force SSL Everywhere for listed domains.
-    if ( (req.http.host ~ "^(www.saey.me|saey.me|NightBits.lan)") && req.http.X-Forwarded-Proto !~ "https") {
+   #if ( (req.http.host ~ "^(www.saey.me|saey.me|NightBits.lan)") && req.http.X-Forwarded-Proto !~ "https") {
     # Or switch to this like to fore SSL for all domains.
-    if (req.http.X-Forwarded-Proto !~ "https") {
-        set req.http.x-redir = "https://" + req.http.host + req.url;
-        return (synth(750, ""));
-    }
+    #if (req.http.X-Forwarded-Proto !~ "https") {
+    #    set req.http.x-redir = "https://" + req.http.host + req.url;
+    #    return (synth(750, ""));
+    #}
 
   # Only deal with "normal" types
   if (req.method != "GET" &&
@@ -258,7 +258,7 @@ sub vcl_recv {
 
   return (hash);
 }
-}
+
 
 sub vcl_hit {
     if (req.method == "PURGE"){
