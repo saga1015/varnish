@@ -49,6 +49,25 @@ sub vcl_init {
   vdir.add_backend(server1);
 }
 
+sub removeHeaders{
+   # Remove working headers that shoundn't be sent to the client.
+    unset resp.http.X-Magento-Debug;
+    unset resp.http.X-Magento-Tags;
+    unset resp.http.X-Powered-By;
+    unset resp.http.Server;
+    unset resp.http.X-Varnish;
+    unset resp.http.Via;
+    unset resp.http.Link;
+    unset resp.http.X-Generator;
+
+    unset resp.http.X-Req-Host;
+    unset resp.http.X-Req-URL;
+    unset resp.http.X-Req-URL-Base;
+
+    set resp.http.Server = "NightBitsLAN";
+    set resp.http.X-Powered-By = "CryptionBytes";
+}
+
 sub vcl_recv {
   # Called at the beginning of a request, after the complete request has been received and parsed.
 
@@ -483,20 +502,7 @@ sub vcl_deliver {
     set resp.http.X-Cache = "MISS";
   }
 
-    # Remove working headers that shoundn't be sent to the client.
-    unset resp.http.X-Magento-Debug;
-    unset resp.http.X-Magento-Tags;
-    unset resp.http.X-Powered-By;
-    unset resp.http.Server;
-    unset resp.http.X-Varnish;
-    unset resp.http.Via;
-    unset resp.http.Link;
-    unset resp.http.X-Generator;
-
-    unset resp.http.X-Req-Host;
-    unset resp.http.X-Req-URL;
-    unset resp.http.X-Req-URL-Base;
-
+  call removeHeaders;
   return (deliver);
 }
 
