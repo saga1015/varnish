@@ -111,8 +111,8 @@ sub vcl_recv {
        return (synth(403, "Forbidden"));
    }
 
-  # Do something special with certain urls / ip addresses
-   if (req.http.host ~ "(www\.)?tlw\.io" && (client.ip !~ allow_access))
+   # Do something special with certain urls / ip addresses
+   if (req.http.host ~ "(www\.)?tlw\.io" && !client.ip ~ allow_access)
    {
        # We dont want to give access to these websites yet
        return (synth(403, "Access Denied"));
