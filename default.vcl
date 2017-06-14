@@ -41,6 +41,14 @@ acl forbidden {
     #"127.0.0.1";
 }
 
+acl allow_access {
+  #ACL which gives special access to URLS
+  "localhost";
+  "127.0.0.1";
+  "::1";
+  "192.168.1.0"/32;
+}
+
 sub vcl_init {
   # Called when VCL is loaded, before any requests pass through it.
   # Typically used to initialize VMODs.
@@ -98,6 +106,13 @@ sub vcl_recv {
   # Block access from these hosts
    if (client.ip ~ forbidden) {
        return (synth(403, "Forbidden"));
+   }
+
+   # Do something special with certain urls / ip addresses
+   if (req.http.host ~ "(www\.)?tlw\.io" && !(client.ip ~ allow_access))
+   {
+       # We dont want to give access to these websites yet
+       return (synth(403, "Access Denied"));
    }
 
   # Normalize the query arguments
