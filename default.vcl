@@ -46,7 +46,7 @@ acl allow_access {
   "localhost";
   "127.0.0.1";
   "::1";
-  "192.168.1.0"/32;
+  "8.8.8.8";
 }
 
 sub vcl_init {
@@ -71,7 +71,10 @@ sub removeHeaders{
     unset resp.http.X-Req-Host;
     unset resp.http.X-Req-URL;
     unset resp.http.X-Req-URL-Base;
+    call setCopyright;
+}
 
+sub setCopyright{
     set resp.http.Server = "NightBitsLAN";
     set resp.http.X-Powered-By = "CryptionBytes";
 }
@@ -108,8 +111,8 @@ sub vcl_recv {
        return (synth(403, "Forbidden"));
    }
 
-   # Do something special with certain urls / ip addresses
-   if (req.http.host ~ "(www\.)?tlw\.io" && !(client.ip ~ allow_access))
+  # Do something special with certain urls / ip addresses
+   if (req.http.host ~ "(www\.)?tlw\.io" && (client.ip !~ allow_access))
    {
        # We dont want to give access to these websites yet
        return (synth(403, "Access Denied"));
@@ -531,6 +534,7 @@ sub vcl_purge {
 }
 
 sub vcl_synth {
+  call removeHeaders;
   if (resp.status == 720) {
     # We use this special error status 720 to force redirects with 301 (permanent) redirects
     # To use this, call the following from anywhere in vcl_recv: return (synth(720, "http://host/new.html"));
